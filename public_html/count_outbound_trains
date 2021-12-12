@@ -1,0 +1,4 @@
+#!/bin/sh
+# script to count outbound trains of given line and day
+# note: adapted to format "line <linevalue> day <dayvalue>
+grep "dir=o;day=$4;.*Line=$2" -io sched | wc -l

@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+#	xcal2.1: extended cal program. Accepts month names, not just numbers
+#	usage: 	 xcal2.1 monthname year
+#	!new!:   if one arg, treat as month and use current year
+#
+# ... get month and year from command line or from output of date
+
+	case $# in
+		2)	MON=$1	 
+			YEAR=$2
+			echo "MONTH"
+			set $(date)
+			CURRENTMON=$2
+		       	;;	# both given by user
+		1)	MON=$1			# only month given
+			set $(date)		# load $* with
+						# Sat Nov  5 22:32:46 EDT 2016
+						# 1   2    3 4        5   6
+			YEAR=$6			# get 6th item in list
+			CURRENTMON=$2
+			;;
+		0)				# neither given
+			set $(date)		# set $* with date output
+			MON=$2			# pick element 2 in list
+			CURRENTMON=$2
+			YEAR=$6			# pick item 6 in list
+			;;
+		*)	echo usage $0  [monthname [year]] 
+			exit 1 ;;
+	esac
+
+#  ... use case to convert string to number .. using a script
+
+	if M=$(./name2num $MON)
+	then
+		if [ $M -lt $(./name2num $CURRENTMON) ]
+		then
+			YEAR=$(expr $YEAR + 1)
+		fi
+		/usr/bin/cal $M $YEAR 
+	else
+		echo "Cannot understand month $MON"
+		echo please try again
+		exit 1
+	fi
